@@ -10,15 +10,16 @@ const canvasHeight = 600;
 
 const player1Data = { x: 12, y: 12, width: 10, height: 100, keyUp: "ArrowUp", keyDown: "ArrowDown" }
 
-const setControlType = (type, set) => {
-    if (type === "k") {
+const setControlType = (type, set, inverse) => {
+    console.log(type)
+    if ((!inverse && type === "k") || (inverse && (type === "m"))) {
         controlType = "m"
         controllerSelect.innerHTML = "Mouse"
-        if (set) document.cookie = "controlType=m"
+        if (set) document.cookie = "controlType=m";
     } else {
         controlType = "k"
         controllerSelect.innerHTML = "Keyboard"
-        if (set) document.cookie = "controlType=k"
+        if (set) document.cookie = "controlType=k";
     }
 }
 
@@ -39,9 +40,9 @@ function getCookie(cname) {
 }
 
 const readCookie = () => {
-    setTimeout(() => {
-        setControlType(getCookie("controlType"), false)
-    }, 1000)
+    const control = getCookie("controlType");
+    console.log(control)
+    setControlType(control, false, true)
 }
 
 const roundedRect = (ctx, x, y, width, height, radius) => {
