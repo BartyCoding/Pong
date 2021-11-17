@@ -20,14 +20,32 @@
 </head>
 
 <body>
-    <nav>
-        <h1>Barty200</h1>
-        <ul>
-            <li><a href="">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#coming-soon">Contact</a></li>
-        </ul>
-    </nav>
+
+    <div class="canvas-container">
+        <nav>
+            <h1>Barty200</h1>
+            <ul>
+                <li><a href="https://barty200.me/">Home</a></li>
+                <li><a href="">About</a></li>
+                <li><a href="">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="canvas">
+            <button id="control-selector" class="keyboard-mouse-select">Keyboard</button>
+            <canvas width="600" height="600" id="game-canvas">
+
+            </canvas>
+        </div>
+
+        <div class="sorry-message">
+            <p>Sorry but this resolution isn't yet supported</p>
+        </div>
+
+        <div></div>
+    </div>
+
+    <script src="app.js"></script>
+
 </body>
 
 </html>
