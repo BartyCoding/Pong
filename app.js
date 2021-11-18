@@ -15,11 +15,11 @@ const ballData = {x: canvasWidth/2, y: canvasHeight/2, radius: 5, velX: 1, velY:
 const player1Data = { x: 12, y: 12, width: 10, height: 100, keyUp: "ArrowUp", keyDown: "ArrowDown", score: 0, highScore: 0 }
 
 const updateCookie = () => {
-    document.cookie = "controlType=" + controlType.toString() + ";highScore=" + player1Data.highScore.toString() +";";
+    localStorage.setItem("controlType", controlType);
+    localStorage.setItem("highScore", player1Data.highScore)
 }
 
 const setControlType = (type, set, inverse) => {
-    console.log("SETTING COOKIE CONTROL")
     if ((!inverse && type === "k") || (inverse && (type === "m"))) {
         controlType = "m"
         controllerSelect.innerHTML = "Mouse"
@@ -48,8 +48,8 @@ function getCookie(cname) {
 }
 
 const readCookie = () => {
-    const control = getCookie("controlType");
-    const highScore = getCookie("highScore");
+    const control = localStorage.getItem("controlType");
+    const highScore = localStorage.getItem("highScore");
     setControlType(control, false, true)
     player1Data.highScore = parseInt(highScore) || 0
 }
