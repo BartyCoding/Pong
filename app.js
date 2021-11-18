@@ -8,18 +8,26 @@ let controlType = "k"
 const canvasWidth = 600;
 const canvasHeight = 600;
 
-const player1Data = { x: 12, y: 12, width: 10, height: 100, keyUp: "ArrowUp", keyDown: "ArrowDown" }
+const ballSpeed = 1;
+let gameLoop = null;
+
+const ballData = {x: canvasWidth/2, y: canvasHeight/2, radius: 5, velX: 1, velY: 0.5}
+const player1Data = { x: 12, y: 12, width: 10, height: 100, keyUp: "ArrowUp", keyDown: "ArrowDown", score: 0, highScore: 0 }
+
+const updateCookie = () => {
+    document.cookie = "controlType=" + controlType.toString() + ";highScore=" + player1Data.highScore.toString() +";";
+}
 
 const setControlType = (type, set, inverse) => {
-    console.log(type)
+    console.log("SETTING COOKIE CONTROL")
     if ((!inverse && type === "k") || (inverse && (type === "m"))) {
         controlType = "m"
         controllerSelect.innerHTML = "Mouse"
-        if (set) document.cookie = "controlType=m";
+        if (set) updateCookie();
     } else {
         controlType = "k"
         controllerSelect.innerHTML = "Keyboard"
-        if (set) document.cookie = "controlType=k";
+        if (set) updateCookie();
     }
 }
 
@@ -41,8 +49,9 @@ function getCookie(cname) {
 
 const readCookie = () => {
     const control = getCookie("controlType");
-    console.log(control)
+    const highScore = getCookie("highScore");
     setControlType(control, false, true)
+    player1Data.highScore = parseInt(highScore) || 0
 }
 
 const roundedRect = (ctx, x, y, width, height, radius) => {
@@ -91,8 +100,76 @@ canvas.onmousemove = (event) => {
 
 readCookie()
 
-setInterval(() => {
-    clearCanvas()
+const drawText = (text, x, y, fontSize) => {
+    ctx.font = `${fontSize}px Montserrat`;
+    ctx.textAlign = "center"
+    ctx.fillText(text, x, y);
+}
 
+const rectIntersect = (x1, y1, w1, h1, x2, y2, w2, h2) => {
+    if (x2 > w1 + x1 || x1 > w2 + x2 || y2 > h1 + y1 || y1 > h2 + y2){
+        return false;
+    }
+    return true;
+}
+
+const checkCollisions = (object1, object2) => {
+    if (rectIntersect(object1.x, object1.y, object1.radius, object1.radius, player1Data.x + player1Data.width / 2, player1Data.y, player1Data.width, player1Data.height)) {
+        object1.velX *= -1;
+        player1Data.score += 1
+        if (player1Data.score > player1Data.highScore) {
+            player1Data.highScore = player1Data.score
+            console.log("SETTING COOKIE")
+            document.cookie = updateCookie();
+            console.log(document.cookie)
+        }
+    }
+}
+
+const physics = () => {
+    if (ballData.x + ballData.radius > canvasWidth || ballData.x - ballData.radius < 0) ballData.velX *= -1
+    if (ballData.y + ballData.radius > canvasHeight || ballData.y - ballData.radius < 0) ballData.velY *= -1
+
+    if (ballData.x - ballData.radius < 0) {
+        clearInterval(gameLoop)
+        drawText("Game Over", 300, 300, 48)
+        drawText("Click to play again", 300, 340, 15)
+    }
+
+    checkCollisions(ballData, player1Data);
+
+    ballData.x += ballData.velX
+    ballData.y += ballData.velY
+}
+
+const drawScore = () => {
+    drawText(`Score: ${player1Data.score}`, 60, 30, 15)
+    drawText(`High-score: ${player1Data.highScore}`, 150, 30, 15)
+    
+}
+
+const draw = () => {
     roundedRect(ctx, player1Data.x, player1Data.y, player1Data.width, player1Data.height, 5)
-}, 1)
+    ctx.beginPath()
+    ctx.ellipse(ballData.x, ballData.y, ballData.radius, ballData.radius, Math.PI / 4, 0, 2 * Math.PI)
+    ctx.stroke()
+    drawScore();
+}
+
+canvas.onclick = () => {
+    ballData.x = canvasWidth/2
+    ballData.y = canvasHeight/2
+    ballData.velX = 1
+    ballData.velY = 0.5
+
+    player1Data.score = 0
+
+    gameLoop = setInterval(() => {
+        clearCanvas()
+    
+        physics();
+        draw();
+    }, 1)
+}
+
+drawText("Click to start playing!", 300, 300, 48)
