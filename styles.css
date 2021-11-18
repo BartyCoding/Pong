@@ -96,6 +96,10 @@ canvas {
         display: none;
     }
 
+    .keyboard-mouse-select {
+        display: none;
+    }
+
     .sorry-message {
         display: block;
     }
