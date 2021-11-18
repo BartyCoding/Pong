@@ -5,6 +5,8 @@ const ctx = canvas.getContext("2d");
 const amountToMove = 10
 let controlType = "k"
 
+const gameOn = false;
+
 const canvasWidth = 600;
 const canvasHeight = 600;
 
@@ -131,6 +133,7 @@ const physics = () => {
         clearInterval(gameLoop)
         drawText("Game Over", 300, 300, 48)
         drawText("Click to play again", 300, 340, 15)
+        gameOn = false
     }
 
     checkCollisions(ballData, player1Data);
@@ -154,7 +157,9 @@ const draw = () => {
 }
 
 canvas.onclick = () => {
-    const randomSpeeds = randomBallSpeed(1.5)
+    if (!gameOn) {
+        gameOn = true
+        const randomSpeeds = randomBallSpeed(1.5)
     ballData.x = canvasWidth/2
     ballData.y = canvasHeight/2
     ballData.velX = randomSpeeds[0]
@@ -168,6 +173,8 @@ canvas.onclick = () => {
         physics();
         draw();
     }, 1)
+    }
+    
 }
 
 drawText("Click to start playing!", 300, 300, 48)
