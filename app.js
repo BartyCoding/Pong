@@ -5,7 +5,7 @@ const ctx = canvas.getContext("2d");
 const amountToMove = 10
 let controlType = "k"
 
-const gameOn = false;
+let gameOn = false;
 
 const canvasWidth = 600;
 const canvasHeight = 600;
