@@ -13,7 +13,7 @@ const canvasHeight = 600;
 const ballSpeed = 1;
 let gameLoop = null;
 
-const ballData = {x: canvasWidth/2, y: canvasHeight/2, radius: 5, velX: 1, velY: 0.5}
+const ballData = { x: canvasWidth / 2, y: canvasHeight / 2, radius: 5, velX: 1, velY: 0.5 }
 const player1Data = { x: 12, y: 12, width: 10, height: 100, keyUp: "ArrowUp", keyDown: "ArrowDown", score: 0, highScore: 0 }
 
 const updateStorage = () => {
@@ -52,7 +52,7 @@ const roundedRect = (ctx, x, y, width, height, radius) => {
 
 const getRandomNum = (min, max) => {
     return Math.random() * (max - min) + min;
-  }
+}
 
 const randomBallSpeed = (maxTotal) => {
     let randNum = getRandomNum(0.5, 1)
@@ -106,7 +106,7 @@ const drawText = (text, x, y, fontSize) => {
 }
 
 const rectIntersect = (x1, y1, w1, h1, x2, y2, w2, h2) => {
-    if (x2 > w1 + x1 || x1 > w2 + x2 || y2 > h1 + y1 || y1 > h2 + y2){
+    if (x2 > w1 + x1 || x1 > w2 + x2 || y2 > h1 + y1 || y1 > h2 + y2) {
         return false;
     }
     return true;
@@ -116,7 +116,6 @@ const checkCollisions = (object1, object2) => {
     if (rectIntersect(object1.x, object1.y, object1.radius, object1.radius, player1Data.x + player1Data.width / 2, player1Data.y, player1Data.width, player1Data.height)) {
         object1.velX *= -1;
         object1.velX += 0.1
-        object1.velY += 0.1
         player1Data.score += 1
         if (player1Data.score > player1Data.highScore) {
             player1Data.highScore = player1Data.score
@@ -145,7 +144,7 @@ const physics = () => {
 const drawScore = () => {
     drawText(`Score: ${player1Data.score}`, 60, 30, 15)
     drawText(`High-score: ${player1Data.highScore}`, 150, 30, 15)
-    
+
 }
 
 const draw = () => {
@@ -160,21 +159,21 @@ canvas.onclick = () => {
     if (!gameOn) {
         gameOn = true
         const randomSpeeds = randomBallSpeed(1.5)
-    ballData.x = canvasWidth/2
-    ballData.y = canvasHeight/2
-    ballData.velX = randomSpeeds[0]
-    ballData.velY = randomSpeeds[1]
+        ballData.x = canvasWidth / 2
+        ballData.y = canvasHeight / 2
+        ballData.velX = randomSpeeds[0]
+        ballData.velY = randomSpeeds[1]
 
-    player1Data.score = 0
+        player1Data.score = 0
 
-    gameLoop = setInterval(() => {
-        clearCanvas()
-    
-        physics();
-        draw();
-    }, 1)
+        gameLoop = setInterval(() => {
+            clearCanvas()
+
+            physics();
+            draw();
+        }, 1)
     }
-    
+
 }
 
 drawText("Click to start playing!", 300, 300, 48)
