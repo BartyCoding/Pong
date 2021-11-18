@@ -14,7 +14,7 @@ let gameLoop = null;
 const ballData = {x: canvasWidth/2, y: canvasHeight/2, radius: 5, velX: 1, velY: 0.5}
 const player1Data = { x: 12, y: 12, width: 10, height: 100, keyUp: "ArrowUp", keyDown: "ArrowDown", score: 0, highScore: 0 }
 
-const updateCookie = () => {
+const updateStorage = () => {
     localStorage.setItem("controlType", controlType);
     localStorage.setItem("highScore", player1Data.highScore)
 }
@@ -23,31 +23,15 @@ const setControlType = (type, set, inverse) => {
     if ((!inverse && type === "k") || (inverse && (type === "m"))) {
         controlType = "m"
         controllerSelect.innerHTML = "Mouse"
-        if (set) updateCookie();
+        if (set) updateStorage();
     } else {
         controlType = "k"
         controllerSelect.innerHTML = "Keyboard"
-        if (set) updateCookie();
+        if (set) updateStorage();
     }
 }
 
-function getCookie(cname) {
-    let name = cname + "=";
-    let decodedCookie = decodeURIComponent(document.cookie);
-    let ca = decodedCookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
-    }
-    return "";
-}
-
-const readCookie = () => {
+const readStorage = () => {
     const control = localStorage.getItem("controlType");
     const highScore = localStorage.getItem("highScore");
     setControlType(control, false, true)
@@ -62,6 +46,19 @@ const roundedRect = (ctx, x, y, width, height, radius) => {
     ctx.arcTo(x + width, y, x + width - radius, y, radius);
     ctx.arcTo(x, y, x, y + radius, radius);
     ctx.stroke();
+}
+
+const getRandomNum = (min, max) => {
+    return Math.random() * (max - min) + min;
+  }
+
+const randomBallSpeed = (maxTotal) => {
+    let randNum = getRandomNum(0.5, 1)
+    let randX = randNum;
+    let randY = maxTotal - randNum;
+    let negative = getRandomNum(-1, 1)
+    if (negative < 0) randY *= -1
+    return [randX, randY]
 }
 
 const clearCanvas = () => ctx.clearRect(0, 0, canvasWidth, canvasHeight)
@@ -98,7 +95,7 @@ canvas.onmousemove = (event) => {
     }
 }
 
-readCookie()
+readStorage()
 
 const drawText = (text, x, y, fontSize) => {
     ctx.font = `${fontSize}px Montserrat`;
@@ -116,12 +113,12 @@ const rectIntersect = (x1, y1, w1, h1, x2, y2, w2, h2) => {
 const checkCollisions = (object1, object2) => {
     if (rectIntersect(object1.x, object1.y, object1.radius, object1.radius, player1Data.x + player1Data.width / 2, player1Data.y, player1Data.width, player1Data.height)) {
         object1.velX *= -1;
+        object1.velX += 0.1
+        object1.velY += 0.1
         player1Data.score += 1
         if (player1Data.score > player1Data.highScore) {
             player1Data.highScore = player1Data.score
-            console.log("SETTING COOKIE")
-            document.cookie = updateCookie();
-            console.log(document.cookie)
+            document.cookie = updateStorage();
         }
     }
 }
@@ -157,10 +154,11 @@ const draw = () => {
 }
 
 canvas.onclick = () => {
+    const randomSpeeds = randomBallSpeed(1.5)
     ballData.x = canvasWidth/2
     ballData.y = canvasHeight/2
-    ballData.velX = 1
-    ballData.velY = 0.5
+    ballData.velX = randomSpeeds[0]
+    ballData.velY = randomSpeeds[1]
 
     player1Data.score = 0
 
